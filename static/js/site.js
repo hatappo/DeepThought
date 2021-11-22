@@ -136,13 +136,14 @@ function search() {
     },
   };
   var currentTerm = "";
-  var index = elasticlunr.Index.load(window.searchIndex);
+  var indexJa = elasticlunr.Index.load(window.searchIndex);
+  var indexEn = elasticlunr.Index.load(window.searchIndexEn);
 
   $searchInput.addEventListener(
     "keyup",
     debounce(function () {
       var term = $searchInput.value.trim();
-      if (term === currentTerm || !index) {
+      if (term === currentTerm || !indexJa || !indexEn) {
         return;
       }
       $searchResults.style.display = term === "" ? "none" : "block";
@@ -151,7 +152,9 @@ function search() {
         return;
       }
 
-      var results = index.search(term, options);
+      var resultJa = indexJa.search(term, options);
+      var resultEn = indexEn.search(term, options);
+      var results = resultJa.concat(resultEn);
       if (results.length === 0) {
         $searchResults.style.display = "none";
         return;
